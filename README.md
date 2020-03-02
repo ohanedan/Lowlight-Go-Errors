@@ -4,7 +4,7 @@ In Golang, error checks in the code make it difficult to read the code.
 
 The **Lowlight Go Errors** extension will change the opacity of if clauses which checking errors in golang.
 
-![Example image](images/lowlight-go-errors.example.png)
+![Example Gif](images/lowlight-go-errors.gif)
 
 ## Commands
 ![Commands](images/lowlight-go-errors.commands.png)

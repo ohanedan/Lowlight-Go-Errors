@@ -6,5 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [1.0.1]
+- Project was made ready to be shared.
+
 ## [1.0.0]
 - Initial release
