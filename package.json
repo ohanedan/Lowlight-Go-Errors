@@ -1,0 +1,119 @@
+{
+	"name": "lowlight-go-errors",
+	"displayName": "Lowlight Go Errors",
+	"description": "Changes the opacity of if clauses which checking errors in golang.",
+    "version": "1.0.0",
+    "publisher": "ohanedan",
+    "author": {
+        "name": "Ozan Hanedan"
+    },
+    "homepage": "https://github.com/ohanedan/Lowlight-Go-Errors/blob/master/README.md",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ohanedan/Lowlight-Go-Errors"
+    },
+    "bugs": "https://github.com/ohanedan/Lowlight-Go-Errors/issues",
+	"engines": {
+		"vscode": "^1.42.0"
+	},
+	"extensionKind": [
+        "ui"
+    ],
+	"categories": [
+		"Formatters"
+	],
+	"activationEvents": [
+		"onLanguage:go"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+        "commands": [
+            {
+                "command": "lowlightgoerrors.LowOpacity",
+                "title": "Lowlight Go Errors: Set Opacity to Low"
+            },
+            {
+                "command": "lowlightgoerrors.MediumOpacity",
+                "title": "Lowlight Go Errors: Set Opacity to Medium"
+            },
+            {
+                "command": "lowlightgoerrors.HighOpacity",
+                "title": "Lowlight Go Errors: Set Opacity to High"
+            },
+            {
+                "command": "lowlightgoerrors.Toggle",
+                "title": "Lowlight Go Errors: Toggle"
+            }
+        ],
+        "commandPalette": [
+            {
+                "command": "lowlightgoerrors.LowOpacity",
+                "when": "editorIsOpen"
+            },
+            {
+                "command": "lowlightgoerrors.MediumOpacity",
+                "when": "editorIsOpen"
+            },
+            {
+                "command": "lowlightgoerrors.HighOpacity",
+                "when": "editorIsOpen"
+            },
+            {
+                "command": "lowlightgoerrors.Toggle",
+                "when": "editorIsOpen"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Lowlight Go Errors",
+            "properties": {
+                "lowlightgoerrors.Enabled": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "lowlightgoerrors.LowOpacity": {
+                    "type": "string",
+                    "description": "between 0.0 to 1.0",
+                    "default": "0.1"
+				},
+				"lowlightgoerrors.MediumOpacity": {
+                    "type": "string",
+                    "description": "between 0.0 to 1.0",
+                    "default": "0.5"
+				},
+				"lowlightgoerrors.HighOpacity": {
+                    "type": "string",
+                    "description": "between 0.0 to 1.0",
+                    "default": "1"
+                },
+                "lowlightgoerrors.DefaultOpacity": {
+                    "type": "string",
+					"enum": ["Low","Medium", "High"],
+					"default": "Medium"
+                }
+            }
+        }
+    },
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"package": "vsce package"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.1",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.42.0",
+		"eslint": "^6.8.0",
+		"@typescript-eslint/parser": "^2.18.0",
+		"@typescript-eslint/eslint-plugin": "^2.18.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.0.1",
+		"typescript": "^3.7.5",
+		"vscode-test": "^1.3.0"
+	}
+}
