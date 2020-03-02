@@ -8,6 +8,7 @@
         "name": "Ozan Hanedan"
     },
     "homepage": "https://github.com/ohanedan/Lowlight-Go-Errors/blob/master/README.md",
+    "icon": "images/icon.png",
     "license": "MIT",
     "repository": {
         "type": "git",
