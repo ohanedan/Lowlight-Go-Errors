@@ -6,6 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [1.0.3]
+- Upgrade minimist
+
 ## [1.0.2]
 - Changed readme image to gif
 
