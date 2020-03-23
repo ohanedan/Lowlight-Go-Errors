@@ -86,10 +86,21 @@ const decorationLowlight = function (opacity: string) : any {
 	}
 	let text = editor.document.getText();
 
+	const workbenchConfig = vscode.workspace.getConfiguration();
+
 	let options: vscode.DecorationRenderOptions = {
 		opacity: opacity,
-		rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed
+		rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
 	};
+
+	if(workbenchConfig.get<boolean>('lowlightgoerrors.ChangeColor')) {
+		let color = workbenchConfig.get<string>('lowlightgoerrors.Color');
+		if(!color?.match("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")) {
+			vscode.window.showWarningMessage("lowlightgoerrors.Color is not a color code");
+		}
+		options.color = color;
+	}
+
 	let decoration = vscode.window.createTextEditorDecorationType(options);
 	
 	let ranges = new Array<vscode.DecorationOptions>();

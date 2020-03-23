@@ -2,7 +2,7 @@
 
 In Golang, error checks in the code make it difficult to read the code.
 
-The **Lowlight Go Errors** extension will change the opacity of if clauses which checking errors in golang.
+The **Lowlight Go Errors** extension will change the opacity(also change colors after Update 1.1.0) of if clauses which checking errors in golang.
 
 ![Example Gif](images/lowlight-go-errors.gif)
 
