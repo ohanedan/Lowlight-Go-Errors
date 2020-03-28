@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [1.2.0]
+- Regex check removed. 
+- Known bugs have been fixed.
+
 ## [1.1.0]
 - Added color option.
 

@@ -2,7 +2,7 @@
     "name": "lowlight-go-errors",
     "displayName": "Lowlight Go Errors",
     "description": "Changes the opacity of if clauses which checking errors in golang.",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "publisher": "ohanedan",
     "author": {
         "name": "Ozan Hanedan"
@@ -71,22 +71,27 @@
             "properties": {
                 "lowlightgoerrors.Enabled": {
                     "type": "boolean",
-                    "default": true
+                    "default": true,
+                    "description": "Enable/Disable Pulign",
+                    "scope": "window"
                 },
                 "lowlightgoerrors.LowOpacity": {
                     "type": "string",
                     "description": "between 0.0 to 1.0",
-                    "default": "0.1"
+                    "default": "0.1",
+                    "scope": "window"
                 },
                 "lowlightgoerrors.MediumOpacity": {
                     "type": "string",
                     "description": "between 0.0 to 1.0",
-                    "default": "0.5"
+                    "default": "0.5",
+                    "scope": "window"
                 },
                 "lowlightgoerrors.HighOpacity": {
                     "type": "string",
                     "description": "between 0.0 to 1.0",
-                    "default": "1"
+                    "default": "1",
+                    "scope": "window"
                 },
                 "lowlightgoerrors.DefaultOpacity": {
                     "type": "string",
@@ -95,15 +100,21 @@
                         "Medium",
                         "High"
                     ],
-                    "default": "Medium"
+                    "default": "Medium",
+                    "description": "Default Opacity",
+                    "scope": "window"
                 },
                 "lowlightgoerrors.ChangeColor": {
                     "type": "boolean",
-                    "default": false
+                    "default": false,
+                    "description": "Enable/Disable Change Color Option",
+                    "scope": "window"
                 },
                 "lowlightgoerrors.Color": {
                     "type": "string",
-                    "default": "#D4D4D4"
+                    "default": "#D4D4D4",
+                    "description": "Color",
+                    "scope": "window"
                 }
             }
         }
