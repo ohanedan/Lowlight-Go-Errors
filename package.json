@@ -9,6 +9,13 @@
     },
     "homepage": "https://github.com/ohanedan/Lowlight-Go-Errors/blob/master/README.md",
     "icon": "images/icon.png",
+    "keywords": [
+        "go",
+        "golang",
+        "tool",
+        "error",
+        "gotools"
+    ],
     "license": "MIT",
     "repository": {
         "type": "git",
