@@ -2,7 +2,7 @@
     "name": "lowlight-go-errors",
     "displayName": "Lowlight Go Errors",
     "description": "Changes the opacity of if clauses which checking errors in golang.",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "publisher": "ohanedan",
     "author": {
         "name": "Ozan Hanedan"
