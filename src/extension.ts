@@ -100,39 +100,50 @@ const decorationLowlight = function (opacity: string) : any {
 	
 	let ranges = new Array<vscode.DecorationOptions>();
 
+	let toggleInline = workbenchConfig.get<boolean>('lowlightgoerrors.LowlightInlineErrors');
+
+	let inlineSearchString = "; err != nil {";
 	let searchString = "if err != nil {";
 	for(var i = 0;i<text.length;i++){
-		if(searchString !== text.substr(i,searchString.length)) {
-			continue;
+		if(searchString === text.substr(i,searchString.length)) {
+			ranges.push(constructRange(editor, i, searchString, text));
 		}
-		var startIndex = i + searchString.length;
-		let textPart = text.substr(startIndex);
-		let skip = 0;
-		var j = 0;
-		for(j; j<textPart.length; j++) {
-			let char = textPart.charAt(j);
-			if(char === "{"){ 
-				skip++;
-			};
-			if(char === "}"){
-				if (skip > 0) {
-					skip--;
-				} else {
-					break;
-				}
-			}
+		else if(toggleInline && inlineSearchString === text.substr(i, inlineSearchString.length)){
+			ranges.push(constructRange(editor, i, inlineSearchString, text));
 		}
-		j = j + 1;
-
-		let startPos = editor.document.positionAt(i);
-		let endPos = editor.document.positionAt(startIndex + j);
-		let range: vscode.DecorationOptions = { 
-			range: new vscode.Range(startPos, endPos)
-		};
-		ranges.push(range);
 	}
 	editor.setDecorations(decoration, ranges);
 	return decoration;
+};
+
+const constructRange = function(editor: vscode.TextEditor, i: number, searchString: string, text: string) : vscode.DecorationOptions {
+	var startIndex = i + searchString.length;
+	let textPart = text.substr(startIndex);
+	
+	let skip = 0;
+	var j = 0;
+	for(j; j<textPart.length; j++) {
+		let char = textPart.charAt(j);
+		if(char === "{"){ 
+			skip++;
+		};
+		if(char === "}"){
+			if (skip > 0) {
+				skip--;
+			} else {
+				break;
+			}
+		}
+	}
+	j = j + 1;
+
+	let startPos = editor.document.positionAt(i);
+	let endPos = editor.document.positionAt(startIndex + j);
+	let range: vscode.DecorationOptions = { 
+		range: new vscode.Range(startPos, endPos)
+	};
+
+	return range;
 };
 
 const getOpacity = function(type?: string) : string {
