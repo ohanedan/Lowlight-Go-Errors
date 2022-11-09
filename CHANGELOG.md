@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [1.3.0]
+- Add lowlight option for inline errors
+- Security fixes
+
 ## [1.2.0]
 - Regex check removed. 
 - Known bugs have been fixed.
