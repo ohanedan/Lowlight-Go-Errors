@@ -1,10 +1,15 @@
 .vscode/**
 .vscode-test/**
-out/test/**
+out/**
+node_modules/**
 src/**
 .gitignore
+.npmrc
+.github/**
+.releaserc.json
+esbuild.js
 vsc-extension-quickstart.md
 **/tsconfig.json
-**/.eslintrc.json
+**/eslint.config.mjs
 **/*.map
 **/*.ts

@@ -2,34 +2,93 @@ import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
 	let opacityType: string;
-	let lastDecoration: vscode.TextEditorDecorationType;
+	let decoration: vscode.TextEditorDecorationType | undefined;
+	let decorationKey: string | undefined;
+	let lastRanges: vscode.Range[] = [];
 
-	var timeout: NodeJS.Timer;
-	function triggerLowlight() {
+	var timeout: NodeJS.Timeout | undefined;
+
+	// When `force` is set we drop the cached ranges so the next pass always
+	// re-applies the decorations (used on editor switches and opacity changes).
+	function triggerLowlight(force: boolean = false) {
 		if (timeout) {
 			clearTimeout(timeout);
 		}
-		timeout = setTimeout(() => {
-			const workbenchConfig = vscode.workspace.getConfiguration();
-			if(!workbenchConfig.get<boolean>('lowlightgoerrors.Enabled')) {
-				return;
+		if (force) {
+			lastRanges = [];
+		}
+		timeout = setTimeout(updateDecorations, 200);
+	}
+
+	function updateDecorations() {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor) {
+			return;
+		}
+
+		const workbenchConfig = vscode.workspace.getConfiguration();
+		if (!workbenchConfig.get<boolean>('lowlightgoerrors.Enabled')) {
+			if (decoration) {
+				editor.setDecorations(decoration, []);
 			}
-			if(lastDecoration) {
-				lastDecoration.dispose();
+			lastRanges = [];
+			return;
+		}
+
+		const opacity = getOpacity(opacityType);
+		if (!opacity) {
+			return;
+		}
+
+		let color: string | undefined;
+		if (workbenchConfig.get<boolean>('lowlightgoerrors.ChangeColor')) {
+			color = workbenchConfig.get<string>('lowlightgoerrors.Color');
+			if (!color?.match("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")) {
+				vscode.window.showWarningMessage("lowlightgoerrors.Color is not a color code");
 			}
-			lastDecoration = decorationLowlight(getOpacity(opacityType));
-		}, 200);
+		}
+
+		// Only (re)create the decoration type when its visual options actually
+		// change. Reusing the same type lets setDecorations update atomically,
+		// which avoids the flicker caused by disposing and recreating it.
+		const key = opacity + "|" + (color ?? "");
+		if (key !== decorationKey) {
+			if (decoration) {
+				decoration.dispose();
+			}
+			const options: vscode.DecorationRenderOptions = {
+				opacity: opacity,
+				rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
+			};
+			if (color) {
+				options.color = color;
+			}
+			decoration = vscode.window.createTextEditorDecorationType(options);
+			decorationKey = key;
+			lastRanges = [];
+		}
+
+		const ranges = computeRanges(editor, workbenchConfig);
+
+		// Most edits leave the highlighted blocks untouched (VS Code shifts the
+		// existing ranges automatically). Skip the update when nothing changed
+		// so we never repaint identical decorations.
+		if (rangesEqual(ranges, lastRanges)) {
+			return;
+		}
+		editor.setDecorations(decoration!, ranges);
+		lastRanges = ranges;
 	}
 
 	if (vscode.window.activeTextEditor) {
-		triggerLowlight();
+		triggerLowlight(true);
 	}
 
 	vscode.window.onDidChangeActiveTextEditor(editor => {
-		if(!editor) {
+		if (!editor) {
 			return;
 		}
-		triggerLowlight();
+		triggerLowlight(true);
 	}, null, context.subscriptions);
 
 	vscode.workspace.onDidChangeTextDocument(event => {
@@ -42,19 +101,19 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"lowlightgoerrors.LowOpacity", ()=>{
 			opacityType = "Low";
-			triggerLowlight();
+			triggerLowlight(true);
 		}
 	));
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"lowlightgoerrors.MediumOpacity", ()=>{
 			opacityType = "Medium";
-			triggerLowlight();
+			triggerLowlight(true);
 		}
 	));
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"lowlightgoerrors.HighOpacity", ()=>{
 			opacityType = "High";
-			triggerLowlight();
+			triggerLowlight(true);
 		}
 	));
 	context.subscriptions.push(vscode.commands.registerCommand(
@@ -64,67 +123,45 @@ export function activate(context: vscode.ExtensionContext) {
 			}else{
 				opacityType = "High";
 			}
-			triggerLowlight();
+			triggerLowlight(true);
 		}
 	));
 }
 
 export function deactivate() { }
 
-const decorationLowlight = function (opacity: string) : any {
-	var editor = vscode.window.activeTextEditor;
-	if(!editor){
-		return;
-	}
-	if(!opacity){
-		return;
-	}
+const computeRanges = function (editor: vscode.TextEditor, workbenchConfig: vscode.WorkspaceConfiguration) : vscode.Range[] {
 	let text = editor.document.getText();
-
-	const workbenchConfig = vscode.workspace.getConfiguration();
-
-	let options: vscode.DecorationRenderOptions = {
-		opacity: opacity,
-		rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
-	};
-
-	if(workbenchConfig.get<boolean>('lowlightgoerrors.ChangeColor')) {
-		let color = workbenchConfig.get<string>('lowlightgoerrors.Color');
-		if(!color?.match("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")) {
-			vscode.window.showWarningMessage("lowlightgoerrors.Color is not a color code");
-		}
-		options.color = color;
-	}
-
-	let decoration = vscode.window.createTextEditorDecorationType(options);
-	
-	let ranges = new Array<vscode.DecorationOptions>();
+	let ranges = new Array<vscode.Range>();
 
 	let toggleInline = workbenchConfig.get<boolean>('lowlightgoerrors.LowlightInlineErrors');
 
-	let inlineSearchString = "; err != nil {";
-	let searchString = "if err != nil {";
-	for(var i = 0;i<text.length;i++){
-		if(searchString === text.substr(i,searchString.length)) {
-			ranges.push(constructRange(editor, i, searchString, text));
-		}
-		else if(toggleInline && inlineSearchString === text.substr(i, inlineSearchString.length)){
-			ranges.push(constructRange(editor, i, inlineSearchString, text));
+	// Match error variables with any name beginning with "err" (e.g. err, errSomeName).
+	let searchRegex = /if err\w* != nil {/g;
+	let inlineSearchRegex = /; err\w* != nil {/g;
+	let match: RegExpExecArray | null;
+
+	while((match = searchRegex.exec(text)) !== null) {
+		ranges.push(constructRange(editor, match.index, match[0], text));
+	}
+	if(toggleInline) {
+		while((match = inlineSearchRegex.exec(text)) !== null) {
+			ranges.push(constructRange(editor, match.index, match[0], text));
 		}
 	}
-	editor.setDecorations(decoration, ranges);
-	return decoration;
+
+	return ranges;
 };
 
-const constructRange = function(editor: vscode.TextEditor, i: number, searchString: string, text: string) : vscode.DecorationOptions {
+const constructRange = function(editor: vscode.TextEditor, i: number, searchString: string, text: string) : vscode.Range {
 	var startIndex = i + searchString.length;
 	let textPart = text.substr(startIndex);
-	
+
 	let skip = 0;
 	var j = 0;
 	for(j; j<textPart.length; j++) {
 		let char = textPart.charAt(j);
-		if(char === "{"){ 
+		if(char === "{"){
 			skip++;
 		};
 		if(char === "}"){
@@ -139,11 +176,20 @@ const constructRange = function(editor: vscode.TextEditor, i: number, searchStri
 
 	let startPos = editor.document.positionAt(i);
 	let endPos = editor.document.positionAt(startIndex + j);
-	let range: vscode.DecorationOptions = { 
-		range: new vscode.Range(startPos, endPos)
-	};
 
-	return range;
+	return new vscode.Range(startPos, endPos);
+};
+
+const rangesEqual = function(a: vscode.Range[], b: vscode.Range[]) : boolean {
+	if (a.length !== b.length) {
+		return false;
+	}
+	for (let i = 0; i < a.length; i++) {
+		if (!a[i].isEqual(b[i])) {
+			return false;
+		}
+	}
+	return true;
 };
 
 const getOpacity = function(type?: string) : string {
