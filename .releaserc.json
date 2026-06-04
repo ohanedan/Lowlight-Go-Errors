@@ -8,7 +8,8 @@
 		[
 			"@semantic-release/changelog",
 			{
-				"changelogFile": "CHANGELOG.md"
+				"changelogFile": "CHANGELOG.md",
+				"changelogTitle": "# Changelog\n\nAll notable changes to the \"lowlight-go-errors\" extension are documented in this file."
 			}
 		],
 		[
