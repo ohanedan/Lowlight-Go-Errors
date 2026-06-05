@@ -2,6 +2,13 @@
 
 All notable changes to the "lowlight-go-errors" extension are documented in this file.
 
+# [2.1.0](https://github.com/ohanedan/Lowlight-Go-Errors/compare/v2.0.1...v2.1.0) (2026-06-05)
+
+
+### Features
+
+* support VS Code for the Web ([6e2ceef](https://github.com/ohanedan/Lowlight-Go-Errors/commit/6e2ceef5fb6ef68298a03b7f792a9cafbfeabc2c))
+
 ## [2.0.1](https://github.com/ohanedan/Lowlight-Go-Errors/compare/v2.0.0...v2.0.1) (2026-06-05)
 
 
