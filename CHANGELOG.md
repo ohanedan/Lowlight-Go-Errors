@@ -2,6 +2,13 @@
 
 All notable changes to the "lowlight-go-errors" extension are documented in this file.
 
+## [2.0.1](https://github.com/ohanedan/Lowlight-Go-Errors/compare/v2.0.0...v2.0.1) (2026-06-05)
+
+
+### Bug Fixes
+
+* enable OpenVSX publishing ([dd12bc4](https://github.com/ohanedan/Lowlight-Go-Errors/commit/dd12bc4ada4d1e078b0cce2e0826eb5f4308712d))
+
 # [2.0.0](https://github.com/ohanedan/Lowlight-Go-Errors/compare/v1.3.0...v2.0.0) (2026-06-04)
 
 
