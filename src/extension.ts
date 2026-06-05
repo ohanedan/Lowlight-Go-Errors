@@ -6,7 +6,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let decorationKey: string | undefined;
 	let lastRanges: vscode.Range[] = [];
 
-	var timeout: NodeJS.Timeout | undefined;
+	var timeout: ReturnType<typeof setTimeout> | undefined;
 
 	// When `force` is set we drop the cached ranges so the next pass always
 	// re-applies the decorations (used on editor switches and opacity changes).

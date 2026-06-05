@@ -26,24 +26,34 @@ const esbuildProblemMatcherPlugin = {
 };
 
 async function main() {
-	const ctx = await esbuild.context({
+	const commonOptions = {
 		entryPoints: ["src/extension.ts"],
 		bundle: true,
 		format: "cjs",
 		minify: production,
 		sourcemap: !production,
 		sourcesContent: false,
-		platform: "node",
-		outfile: "dist/extension.js",
 		external: ["vscode"],
 		logLevel: "silent",
 		plugins: [esbuildProblemMatcherPlugin],
-	});
+	};
+	const contexts = await Promise.all([
+		esbuild.context({
+			...commonOptions,
+			platform: "node",
+			outfile: "dist/extension.js",
+		}),
+		esbuild.context({
+			...commonOptions,
+			platform: "browser",
+			outfile: "dist/web/extension.js",
+		}),
+	]);
 	if (watch) {
-		await ctx.watch();
+		await Promise.all(contexts.map((ctx) => ctx.watch()));
 	} else {
-		await ctx.rebuild();
-		await ctx.dispose();
+		await Promise.all(contexts.map((ctx) => ctx.rebuild()));
+		await Promise.all(contexts.map((ctx) => ctx.dispose()));
 	}
 }
 
