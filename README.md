@@ -28,3 +28,7 @@ This extension can be configured in User Settings or Workspace settings.
 `lowlightgoerrors.HighOpacity : 1` changes high opacity value  
 `lowlightgoerrors.DefaultOpacity : "Medium"` which opacity you want when vscode is first opened  
 `lowlightgoerrors.LowlightInlineErrors : "false"` lowlight inline errors
+
+## Acknowledgements
+
+Special thanks to [Ilker Aksu](https://github.com/ilkeraksu), who originally came up with the idea for this extension.
